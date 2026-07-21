@@ -87,7 +87,7 @@ runs:
           cd $GITHUB_WORKSPACE/device_kernel
 
           if [[ -n "${{ env.DEFCONFIG_SOURCE }}" ]]; then
-            ${{ env.CURLX }} ${{ env.DEFCONFIG_SOURCE }} device_kernel/arch/"${{ env.KERNEL_ARCH }}"/configs/${{ env.DEFCONFIG_NAME }}
+            ${{ env.CURLX }} ${{ env.DEFCONFIG_SOURCE }} arch/"${{ env.KERNEL_ARCH }}"/configs/${{ env.DEFCONFIG_NAME }}
 
           elif [[ -z "${{ env.DEFCONFIG_ORIGIN_IMAGE }}" ]]; then
             if [[ "${{ env.DEFCONFIG_FROM_BOOT }}" == "true" ]]; then
