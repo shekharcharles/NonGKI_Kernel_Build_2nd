@@ -141,6 +141,9 @@ jobs:
           # so put emulation in LDFLAGS (not command-line-set) -> reaches the empty-link ld_flags.
           printf '\nLDFLAGS += -maarch64linux\n' >> arch/arm64/Makefile
           echo "[+] ld.lld emulation via LDFLAGS:"; grep -n 'maarch64linux' arch/arm64/Makefile | head -2
+          # drop broken Qualcomm reference-board 'cdp' DTB/overlays (undefined-label bug; not our device, fajita uses sdm845.dtb+overlay)
+          sed -i '/cdp/d' arch/arm64/boot/dts/qcom/Makefile
+          echo "[+] removed cdp DTBs from build"
 
       - name: 🚀 Build Process
         uses: ./.github/workflows/build-process
