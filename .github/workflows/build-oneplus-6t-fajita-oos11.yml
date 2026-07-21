@@ -129,6 +129,8 @@ jobs:
           grep -rl -- '-Wno-undefined-optimized' . 2>/dev/null | xargs -r sed -i 's/-Wno-undefined-optimized//g'
           sed -i 's|^KBUILD_CFLAGS :=|KBUILD_CFLAGS := -Wno-unknown-warning-option |' Makefile
           echo "[+] clang warning-flag fixes applied"
+          # stat.c SUS_KSTAT hunk#3 was skipped (SKIP_PATCH) -> partial susfs broke it; revert to pristine (secondary spoof only)
+          git checkout -- fs/stat.c && echo "[+] fs/stat.c reverted to pristine (dropped partial SUS_KSTAT)"
 
       - name: 🚀 Build Process
         uses: ./.github/workflows/build-process
