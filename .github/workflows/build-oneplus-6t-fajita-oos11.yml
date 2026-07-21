@@ -145,9 +145,10 @@ jobs:
           # — none are OnePlus; several have undefined-label bugs. Fajita DT comes from sdm845.dtb base + fajita overlays.
           sed -i '/sdm845-sim\.dtb/,/sdm845-v2\.1-mtp\.dtb$/d' arch/arm64/boot/dts/qcom/Makefile
           echo "[+] removed reference-board sdm845 dtb-y block (remaining sim refs: $(grep -c 'sdm845-sim.dtb' arch/arm64/boot/dts/qcom/Makefile || echo 0))"
-          # ld.lld rejects '-shared' + '-pie' together (GNU ld allows). Drop -shared from vmlinux link (keep -pie for relocatable)
-          sed -i '/LDFLAGS_vmlinux/ s/ -shared//' arch/arm64/Makefile
-          echo "[+] dropped -shared from LDFLAGS_vmlinux for ld.lld"
+          # ld.lld rejects '-shared'+'-pie' together AND needs text-relocs allowed for PIE kernel.
+          # Replace -shared with -z notext (keep -pie; kernel resolves R_AARCH64_ABS64 itself at boot).
+          sed -i '/LDFLAGS_vmlinux/ s/ -shared/ -z notext/' arch/arm64/Makefile
+          echo "[+] LDFLAGS_vmlinux: -shared -> -z notext"; grep -n 'LDFLAGS_vmlinux.*notext' arch/arm64/Makefile | head -1 || true
 
       - name: 🚀 Build Process
         uses: ./.github/workflows/build-process
