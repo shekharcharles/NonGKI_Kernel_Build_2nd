@@ -141,9 +141,10 @@ jobs:
           # so put emulation in LDFLAGS (not command-line-set) -> reaches the empty-link ld_flags.
           printf '\nLDFLAGS += -maarch64linux\n' >> arch/arm64/Makefile
           echo "[+] ld.lld emulation via LDFLAGS:"; grep -n 'maarch64linux' arch/arm64/Makefile | head -2
-          # drop broken Qualcomm reference-board 'cdp' DTB/overlays (undefined-label bug; not our device, fajita uses sdm845.dtb+overlay)
-          sed -i '/cdp/d' arch/arm64/boot/dts/qcom/Makefile
-          echo "[+] removed cdp DTBs from build"
+          # Drop the ENTIRE Qualcomm reference-board sdm845 dtb-y block (sim/rumi/mtp/cdp/qrd/qvr/robotics/interposer)
+          # — none are OnePlus; several have undefined-label bugs. Fajita DT comes from sdm845.dtb base + fajita overlays.
+          sed -i '/sdm845-sim\.dtb/,/sdm845-v2\.1-mtp\.dtb$/d' arch/arm64/boot/dts/qcom/Makefile
+          echo "[+] removed reference-board sdm845 dtb-y block:"; grep -c 'sdm845-sim.dtb' arch/arm64/boot/dts/qcom/Makefile
 
       - name: 🚀 Build Process
         uses: ./.github/workflows/build-process
