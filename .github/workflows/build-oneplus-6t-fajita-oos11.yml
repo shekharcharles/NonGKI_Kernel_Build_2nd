@@ -145,10 +145,11 @@ jobs:
           # — none are OnePlus; several have undefined-label bugs. Fajita DT comes from sdm845.dtb base + fajita overlays.
           sed -i '/sdm845-sim\.dtb/,/sdm845-v2\.1-mtp\.dtb$/d' arch/arm64/boot/dts/qcom/Makefile
           echo "[+] removed reference-board sdm845 dtb-y block (remaining sim refs: $(grep -c 'sdm845-sim.dtb' arch/arm64/boot/dts/qcom/Makefile || echo 0))"
-          # ld.lld rejects '-shared'+'-pie' together AND needs text-relocs allowed for PIE kernel.
-          # Replace -shared with -z notext (keep -pie; kernel resolves R_AARCH64_ABS64 itself at boot).
-          sed -i '/LDFLAGS_vmlinux/ s/ -shared/ -z notext/' arch/arm64/Makefile
-          echo "[+] LDFLAGS_vmlinux: -shared -> -z notext"; grep -n 'LDFLAGS_vmlinux.*notext' arch/arm64/Makefile | head -1 || true
+          # ld.lld PIE-reloc emitted a kernel that boots but init SIGSEGVs. Build NON-relocatable (fixed address)
+          # -> skips the whole -pie/-shared LDFLAGS_vmlinux block, no lld reloc issue. Loses KASLR only.
+          DC=arch/arm64/configs/sdm845-perf_defconfig
+          printf '# CONFIG_RANDOMIZE_BASE is not set\n# CONFIG_RELOCATABLE is not set\n' >> $DC
+          echo "[+] disabled CONFIG_RELOCATABLE + RANDOMIZE_BASE (non-PIE kernel)"
 
       - name: 🚀 Build Process
         uses: ./.github/workflows/build-process
