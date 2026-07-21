@@ -83,7 +83,7 @@ env:
   GENERATE_CHIP: "qcom"
 
   BUILD_DEBUGGER: "true" # surface build errors while adapting
-  SKIP_PATCH: "false"
+  SKIP_PATCH: "true" # ignore 2 SUS_KSTAT rej hunks (OnePlus fs drift); rest of susfs applies
 
   BUILD_OTHER_CONFIG: "false"
   MERGE_CONFIG_FILES: ""
