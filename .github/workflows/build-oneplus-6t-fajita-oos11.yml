@@ -25,18 +25,18 @@ env:
   GCC_32_SOURCE : "https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9.git"
   GCC_32_BRANCH : "android12L-release"
 
-  DEFCONFIG_SOURCE: ""
-  DEFCONFIG_NAME : "sdm845-perf_defconfig"
+  DEFCONFIG_SOURCE: "https://raw.githubusercontent.com/reocat/android_kernel_oneplus6/development/arch/arm64/configs/enchilada_defconfig"
+  DEFCONFIG_NAME : "enchilada_defconfig"
   DEFCONFIG_ORIGIN_IMAGE: ""
   DEFCONFIG_FROM_BOOT: false
 
   KERNELSU_SOURCE : ""
   KERNELSU_BRANCH : ""
 
-  KERNELSU_AUTO_GET : "false"
+  KERNELSU_AUTO_GET : "true"
   KERNELSU_AUTO_FORK : "resukisu" # matches device's current root family (com.resukisu.resukisu)
 
-  SUSFS_ENABLE : false
+  SUSFS_ENABLE : true
   SUSFS_FIXED : false
 
   AK3_SOURCE : "https://github.com/osm0sis/AnyKernel3.git"
@@ -147,7 +147,7 @@ jobs:
           echo "[+] removed reference-board sdm845 dtb-y block (remaining sim refs: $(grep -c 'sdm845-sim.dtb' arch/arm64/boot/dts/qcom/Makefile || echo 0))"
           # ld.lld PIE-reloc emitted a kernel that boots but init SIGSEGVs. Build NON-relocatable (fixed address)
           # -> skips the whole -pie/-shared LDFLAGS_vmlinux block, no lld reloc issue. Loses KASLR only.
-          DC=arch/arm64/configs/sdm845-perf_defconfig
+          DC=arch/arm64/configs/enchilada_defconfig
           printf '# CONFIG_RANDOMIZE_BASE is not set\n# CONFIG_RELOCATABLE is not set\n' >> $DC
           echo "[+] disabled CONFIG_RELOCATABLE + RANDOMIZE_BASE (non-PIE kernel)"
 
