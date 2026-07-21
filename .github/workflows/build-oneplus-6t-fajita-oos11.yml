@@ -150,6 +150,10 @@ jobs:
           DC=arch/arm64/configs/enchilada_defconfig
           printf '# CONFIG_RANDOMIZE_BASE is not set\n# CONFIG_RELOCATABLE is not set\n' >> $DC
           echo "[+] disabled CONFIG_RELOCATABLE + RANDOMIZE_BASE (non-PIE kernel)"
+          # enchilada enables DT_OVERLAY -> DTC '-@' flag which 4.9 bundled dtc lacks ("unknown option").
+          # We use stock kernel_dtb for boot, don't need built overlays -> disable overlay build.
+          printf '# CONFIG_BUILD_ARM64_DT_OVERLAY is not set\n' >> $DC
+          echo "[+] disabled CONFIG_BUILD_ARM64_DT_OVERLAY (dtc -@ unsupported on 4.9)"
 
       - name: 🚀 Build Process
         uses: ./.github/workflows/build-process
