@@ -144,7 +144,7 @@ jobs:
           # Drop the ENTIRE Qualcomm reference-board sdm845 dtb-y block (sim/rumi/mtp/cdp/qrd/qvr/robotics/interposer)
           # — none are OnePlus; several have undefined-label bugs. Fajita DT comes from sdm845.dtb base + fajita overlays.
           sed -i '/sdm845-sim\.dtb/,/sdm845-v2\.1-mtp\.dtb$/d' arch/arm64/boot/dts/qcom/Makefile
-          echo "[+] removed reference-board sdm845 dtb-y block:"; grep -c 'sdm845-sim.dtb' arch/arm64/boot/dts/qcom/Makefile
+          echo "[+] removed reference-board sdm845 dtb-y block (remaining sim refs: $(grep -c 'sdm845-sim.dtb' arch/arm64/boot/dts/qcom/Makefile || echo 0))"
 
       - name: 🚀 Build Process
         uses: ./.github/workflows/build-process
