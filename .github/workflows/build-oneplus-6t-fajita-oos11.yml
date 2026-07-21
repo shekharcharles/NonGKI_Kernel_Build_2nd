@@ -125,6 +125,10 @@ jobs:
           if grep -q "gcc-wrapper" Makefile 2>/dev/null; then
             sed -i 's#scripts/gcc-wrapper.py##g' Makefile && echo "[+] gcc-wrapper neutralized"
           fi
+          # clang rejects GCC-only warning flags under -Werror: strip -Wno-undefined-optimized + tolerate unknown -W
+          grep -rl -- '-Wno-undefined-optimized' . 2>/dev/null | xargs -r sed -i 's/-Wno-undefined-optimized//g'
+          sed -i 's|^KBUILD_CFLAGS :=|KBUILD_CFLAGS := -Wno-unknown-warning-option |' Makefile
+          echo "[+] clang warning-flag fixes applied"
 
       - name: 🚀 Build Process
         uses: ./.github/workflows/build-process
