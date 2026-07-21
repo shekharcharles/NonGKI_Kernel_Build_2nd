@@ -115,6 +115,17 @@ jobs:
       - name: 🔗 Patch for no-kprobe
         uses: ./.github/workflows/patch-no-kprobe
 
+      - name: 🪛 Extra Kernel Options (OnePlus 4.9 + modern clang fixes)
+        run: |
+          cd $GITHUB_WORKSPACE/device_kernel
+          # ravindu644 003: -fstack-protector-strong cc-option check misfires under clang -> skip STRONG check
+          sed -i 's/^ifdef CONFIG_CC_STACKPROTECTOR_STRONG$/ifdef CONFIG_CC_STACKPROTECTOR_NONE/' Makefile
+          echo "[+] fstack-protector fix applied:"; grep -n "CONFIG_CC_STACKPROTECTOR_NONE" Makefile | head -2
+          # OnePlus gcc-wrapper breaks clang; neutralize if referenced
+          if grep -q "gcc-wrapper" Makefile 2>/dev/null; then
+            sed -i 's#scripts/gcc-wrapper.py##g' Makefile && echo "[+] gcc-wrapper neutralized"
+          fi
+
       - name: 🚀 Build Process
         uses: ./.github/workflows/build-process
 
