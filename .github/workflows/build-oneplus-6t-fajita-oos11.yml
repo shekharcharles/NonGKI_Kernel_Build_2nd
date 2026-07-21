@@ -126,9 +126,8 @@ jobs:
       - name: 🪛 Extra Kernel Options (OnePlus 4.9 + modern clang fixes)
         run: |
           cd $GITHUB_WORKSPACE/device_kernel
-          # ravindu644 003: -fstack-protector-strong cc-option check misfires under clang -> skip STRONG check
-          sed -i 's/^ifdef CONFIG_CC_STACKPROTECTOR_STRONG$/ifdef CONFIG_CC_STACKPROTECTOR_NONE/' Makefile
-          echo "[+] fstack-protector fix applied:"; grep -n "CONFIG_CC_STACKPROTECTOR_NONE" Makefile | head -2
+          # (stack-protector handled via config disable below — the Makefile ifdef hack caused
+          #  __stack_chk_guard/fail undefined symbols with enchilada's STACKPROTECTOR_STRONG=y)
           # OnePlus gcc-wrapper breaks clang; neutralize if referenced
           if grep -q "gcc-wrapper" Makefile 2>/dev/null; then
             sed -i 's#scripts/gcc-wrapper.py##g' Makefile && echo "[+] gcc-wrapper neutralized"
@@ -154,6 +153,9 @@ jobs:
           # We use stock kernel_dtb for boot, don't need built overlays -> disable overlay build.
           printf '# CONFIG_BUILD_ARM64_DT_OVERLAY is not set\n' >> $DC
           echo "[+] disabled CONFIG_BUILD_ARM64_DT_OVERLAY (dtc -@ unsupported on 4.9)"
+          # Fully disable stack protector (STRONG cc-option misfires under clang -> __stack_chk_guard/fail undefined).
+          printf '# CONFIG_CC_STACKPROTECTOR_REGULAR is not set\n# CONFIG_CC_STACKPROTECTOR_STRONG is not set\nCONFIG_CC_STACKPROTECTOR_NONE=y\n' >> $DC
+          echo "[+] disabled stack protector (NONE)"
 
       - name: 🚀 Build Process
         uses: ./.github/workflows/build-process
