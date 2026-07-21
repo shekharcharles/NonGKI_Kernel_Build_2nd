@@ -118,7 +118,7 @@ jobs:
           # Partial-susfs files (hunks skipped by SKIP_PATCH / not fitting OnePlus fs) broke compile.
           # Revert to pristine BEFORE hooks so ReSukiSU inline hooks land clean. Loses only 2 secondary
           # sus features (kstat stat spoof, inotify-fdinfo hiding); core SUS_PATH/MOUNT/MAPS intact.
-          git checkout -- fs/stat.c fs/notify/fdinfo.c && echo "[+] reverted stat.c + fdinfo.c to pristine before hooks"
+          git checkout -- fs/stat.c fs/notify/fdinfo.c fs/proc/cmdline.c fs/proc/base.c && echo "[+] reverted partial-susfs secondary files to pristine before hooks"
 
       - name: 🔗 Patch for no-kprobe
         uses: ./.github/workflows/patch-no-kprobe
@@ -137,9 +137,10 @@ jobs:
           grep -rl -- '-Wno-undefined-optimized' . 2>/dev/null | xargs -r sed -i 's/-Wno-undefined-optimized//g'
           sed -i 's|^KBUILD_CFLAGS :=|KBUILD_CFLAGS := -Wno-unknown-warning-option |' Makefile
           echo "[+] clang warning-flag fixes applied"
-          # ld.lld can't infer target on empty built-in.o (4.9 sets -EL but no emulation) -> add -maarch64linux to LD
-          sed -i '/^LD.*+= -EL$/ s/$/ -maarch64linux/' arch/arm64/Makefile
-          echo "[+] ld.lld emulation added:"; grep -n 'maarch64linux' arch/arm64/Makefile | head -2
+          # ld.lld can't infer target on empty built-in.o. LD=ld.lld is command-line-set (overrides Makefile LD+=),
+          # so put emulation in LDFLAGS (not command-line-set) -> reaches the empty-link ld_flags.
+          printf '\nLDFLAGS += -maarch64linux\n' >> arch/arm64/Makefile
+          echo "[+] ld.lld emulation via LDFLAGS:"; grep -n 'maarch64linux' arch/arm64/Makefile | head -2
 
       - name: 🚀 Build Process
         uses: ./.github/workflows/build-process
