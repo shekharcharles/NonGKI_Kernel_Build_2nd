@@ -13,8 +13,8 @@ env:
   EXTRA_CMDS : "LD=ld.lld"
 
   # Clean stock OxygenOS-11 source (no KSU) -> framework integrates ReSukiSU fresh
-  KERNEL_SOURCE : "https://github.com/OnePlusOSS/android_kernel_oneplus_sdm845.git"
-  KERNEL_BRANCH : "oneplus/SDM845_R_11.0"
+  KERNEL_SOURCE : "https://github.com/reocat/android_kernel_oneplus6.git"
+  KERNEL_BRANCH : "development"
 
   CLANG_SOURCE : "https://github.com/LineageOS/android_prebuilts_clang_kernel_linux-x86_clang-r416183b.git"
   CLANG_BRANCH : "lineage-20.0"
@@ -25,7 +25,7 @@ env:
   GCC_32_SOURCE : "https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/arm/arm-linux-androideabi-4.9.git"
   GCC_32_BRANCH : "android12L-release"
 
-  DEFCONFIG_SOURCE: "https://raw.githubusercontent.com/reocat/android_kernel_oneplus6/development/arch/arm64/configs/enchilada_defconfig"
+  DEFCONFIG_SOURCE: ""
   DEFCONFIG_NAME : "enchilada_defconfig"
   DEFCONFIG_ORIGIN_IMAGE: ""
   DEFCONFIG_FROM_BOOT: false
@@ -33,7 +33,7 @@ env:
   KERNELSU_SOURCE : ""
   KERNELSU_BRANCH : ""
 
-  KERNELSU_AUTO_GET : "false"
+  KERNELSU_AUTO_GET : "true"
   KERNELSU_AUTO_FORK : "resukisu" # matches device's current root family (com.resukisu.resukisu)
 
   SUSFS_ENABLE : false
